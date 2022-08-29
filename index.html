@@ -14,23 +14,24 @@
 	</style>
 </head>
 <body>
-	<canvas id="mycanvas" width="500" height="500">
+	<canvas id="mycanvas" width="1300" height="700">
 		Tu navegador no soporta canvas
 	</canvas>
-    <img src="wolf.png" id="imagen" width="40" height="40">
+
 	<script type="text/javascript">
 
 		var canvas = null;
 		var ctx = null;
 		var player1 = null;
 		var player2 = null;
-        var obstaculo1=null;
+    var obstaculo1=null;
 		var super_x = 10, super_y = 10;
 		var direction = 'right';
 		var score = 0;
 		var speed = 5;
 		var pause = false;
 		var juego=true;
+		var time=0;
 		var coin = new Image();
 		var duende = new Image();
 		var soundCoin=new Audio();
@@ -43,26 +44,29 @@
             obstaculo1=new Cuadrado(250,250,200,25,"silver");
 			coin.src="coin.png";
 			duende.src="duende.png";
-			soundCoin.src='getCoin.mp3'
+			soundCoin.src='getCoin.mp3';
 
 				paint();
 
 
-		} 
+		}
+
 		function paint()
 		{
 			window.requestAnimationFrame(paint)
 			ctx.fillStyle = "black";
-			ctx.fillRect(0,0,500,500);
+			ctx.fillRect(0,0,1300,700);
             //TABLERO
 			ctx.fillStyle = "white";
-			ctx.fillText('SCORE:'+score+'  SPEED:'+speed,30,20);
+			ctx.fillText('SCORE:'+score+'  SPEED:'+speed,15,15);
 
 			//player1.dibujar(ctx);
 			ctx.drawImage(duende,player1.x,player1.y);
 			//player2.dibujar(ctx);
 			ctx.drawImage(coin,player2.x,player2.y);
             obstaculo1.dibujar(ctx);
+
+			countUpTimer();
 			if(juego){
 				if (pause) {
 
@@ -75,9 +79,8 @@
 				}
 
 			}
-
-
 		}
+
 		function update()
 		{
 
@@ -114,7 +117,7 @@
 				soundCoin.play();
 			}
 
-            if(player1.se_tocan(obstaculo1)){
+        if(player1.se_tocan(obstaculo1)){
 				if (direction == 'right') {
 				player.x-=speed;
 			}
@@ -128,7 +131,6 @@
 			if (direction == 'up') {
 				player1.y+=speed;
 			}
-
                 score-1;
 
 
@@ -143,6 +145,12 @@
 
             }
 
+		}
+
+		function Restar(){
+			jugador1.x=super_x;
+			jugador1.y=super_y;
+			time=0;
 		}
 		document.addEventListener('keydown',function(e){
             console.log(e);
@@ -198,13 +206,20 @@
 				ctx.strokeRect(this.x,this.y,this.w,this.h);
 			}
 		}
-		function random_rgba() {
-		    var o = Math.round, r = Math.random, s = 255;
-		    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
-		}
+
 		function RandomNumber(max) {
 		    return Math.floor(Math.random() * max) + 1;
 		}
+
+    //funcion para contar el tiempo
+ 	function  countUpTimer() {
+	  ++time;
+	  var hour = Math.floor(time / 3600);
+	  var minute = Math.floor((time - hour * 3600) / 60);
+	  var seconds = time - (hour * 3600 + minute * 60);
+		ctx.fillStyle = "white";
+		ctx.fillText('minutes:'+hour+ " seconds:"+minute,300,15);
+	}
 	</script>
 </body>
 </html>
