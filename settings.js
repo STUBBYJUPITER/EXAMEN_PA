@@ -4,11 +4,23 @@ let rowsCols = document.querySelector("#number");
 let complete = document.querySelector(".complete");
 let replay = document.querySelector(".replay");
 let close = document.querySelector(".close");
-let soundtrack=new Audio();
 let newMaze;
+
 
 form.addEventListener("submit", generateMaze);
 document.addEventListener("keydown", move);
+window.addEventListener('click',()=>{
+  let sound =document.getElementById('soundtrack');
+  if (typeof sound.loop == 'boolean') {
+    sound.loop = true;
+  } else {
+    sound.addEventListener('ended', function() {
+      this.currentTime = 0;
+      this.play();
+    }, false);
+  }
+  sound.play();
+});
 replay.addEventListener("click", () => {
   location.reload();
 });
@@ -36,6 +48,7 @@ function generateMaze(e) {
   newMaze = new Maze(mazeSize, number, number);
   newMaze.setup();
   newMaze.draw();
+
 }
 
 //funcion para los contorles del laberinto

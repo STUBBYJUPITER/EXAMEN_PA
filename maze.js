@@ -2,10 +2,12 @@
 let maze = document.querySelector(".maze");
 let ctx = maze.getContext("2d");
 let generationComplete = false;
+let skin= new Image();
 let current;
 let goal;
 
-//calse para construir el laberinto
+
+//clase para construir el laberinto
 class Maze {
   constructor(size, rows, columns) {
     this.size = size;
@@ -20,13 +22,13 @@ class Maze {
     for (let r = 0; r < this.rows; r++) {
       let row = [];
       for (let c = 0; c < this.columns; c++) {
-        // Create a new instance of the Cell class for each element in the 2D array and push to the maze grid array
+        // Cree una nueva instancia de la clase Cell para cada elemento en la matriz 2D y empujar a la matriz de cuadrícula del laberinto
         let cell = new Cell(r, c, this.grid, this.size);
         row.push(cell);
       }
       this.grid.push(row);
     }
-    // Set the starting grid
+    // establecer el grid
     current = this.grid[0][0];
     this.grid[this.rows - 1][this.columns - 1].goal = true;
   }
@@ -45,34 +47,34 @@ class Maze {
         grid[r][c].show(this.size, this.rows, this.columns);
       }
     }
-    // This function will assign the variable 'next' to random cell out of the current cells available neighbouting cells
+    // Esta función asignará la variable 'next' a la celda aleatoria de las celdas actuales disponibles en las celdas vecinas
     let next = current.checkNeighbours();
-    // If there is a non visited neighbour cell
+    //Si hay una celda vecina no visitada
     if (next) {
       next.visited = true;
-      // Add the current cell to the stack for backtracking
+      // se agraga la celda actual a la pila para retroceder
       this.stack.push(current);
-      // this function will highlight the current cell on the grid. The parameter columns is passed
-      // in order to set the size of the cell
+      // esta función resaltará la celda actual en la cuadrícula. Las columnas de parámetros se pasan
+      // para establecer el tamaño de la celda
       current.highlight(this.columns);
-      // This function compares the current cell to the next cell and removes the relevant walls for each cell
+      // Esta función compara la celda actual con la celda siguiente y elimina las paredes relevantes para cada celda
       current.removeWalls(current, next);
-      // Set the nect cell to the current cell
+      // Establecer la siguiente celda en la celda actual
       current = next;
 
-      // Else if there are no available neighbours start backtracking using the stack
+      // De lo contrario, si no hay vecinos disponibles, se comienza a retroceder usando la pila
     } else if (this.stack.length > 0) {
       let cell = this.stack.pop();
       current = cell;
       current.highlight(this.columns);
     }
-    // If no more items in the stack then all cells have been visted and the function can be exited
+    // si no hay mas items en el stack entonces todas las celdas han sido visitdas
     if (this.stack.length === 0) {
       generationComplete = true;
       return;
     }
 
-    // Recursively call the draw function. This will be called up until the stack is empty
+    // recursividad hasta que la pila este vacia
     window.requestAnimationFrame(() => {
       this.draw();
     });
@@ -81,7 +83,7 @@ class Maze {
 }
 
 class Cell {
-  // Constructor takes in the rowNum and colNum which will be used as coordinates to draw on the canvas.
+  // el constructor toma las variables rowNum y colNum que se utilizan para coordenadas para dibujar en canvas.
   constructor(rowNum, colNum, parentGrid, parentSize) {
     this.rowNum = rowNum;
     this.colNum = colNum;
@@ -93,8 +95,8 @@ class Cell {
       leftWall: true,
     };
     this.goal = false;
-    // parentGrid is passed in to enable the checkneighbours method.
-    // parentSize is passed in to set the size of each cell on the grid
+    // parentGrid se pasa para habilitar el método checkneighbours
+    // parentSize se pasa para establecer el tamaño de cada celda en la cuadrícula
     this.parentGrid = parentGrid;
     this.parentSize = parentSize;
   }
@@ -104,15 +106,13 @@ class Cell {
     let row = this.rowNum;
     let col = this.colNum;
     let neighbours = [];
-
-    // The following lines push all available neighbours to the neighbours array
-    // undefined is returned where the index is out of bounds (edge cases)
+    // se devuelve indefinido donde el índice está fuera de los límites
     let top = row !== 0 ? grid[row - 1][col] : undefined;
     let right = col !== grid.length - 1 ? grid[row][col + 1] : undefined;
     let bottom = row !== grid.length - 1 ? grid[row + 1][col] : undefined;
     let left = col !== 0 ? grid[row][col - 1] : undefined;
 
-    // if the following are not 'undefined' then push them to the neighbours array
+    // si los siguientes moviemientos  no son indefinidos, se agregan al array neighbours
     if (top && !top.visited) neighbours.push(top);
     if (right && !right.visited) neighbours.push(right);
     if (bottom && !bottom.visited) neighbours.push(bottom);
@@ -162,7 +162,8 @@ class Cell {
     let x = (this.colNum * this.parentSize) / columns + 1;
     let y = (this.rowNum * this.parentSize) / columns + 1;
     //skin del jugador
-    ctx.fillStyle = "red";
+    skin.src="p1.png";
+    ctx.fillStyle = "purple";
     ctx.fillRect(
       x,
       y,
@@ -182,7 +183,7 @@ class Cell {
       cell1.walls.rightWall = false;
       cell2.walls.leftWall = false;
     }
-    // compares to two cells on x axis
+    // se compara con dos celdas en el eje x
     let y = cell1.rowNum - cell2.rowNum;
     // Elimina las paredes relevantes si hay una diferente en el eje x
     if (y === 1) {
@@ -209,8 +210,13 @@ class Cell {
       ctx.fillRect(x + 1, y + 1, size / columns - 2, size / rows - 2);
     }
     if (this.goal) {
-      ctx.fillStyle = "rgb(83, 247, 43)";
+      ctx.fillStyle = random_rgba();
       ctx.fillRect(x + 1, y + 1, size / columns - 2, size / rows - 2);
     }
   }
+
+}
+function random_rgba() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
 }
