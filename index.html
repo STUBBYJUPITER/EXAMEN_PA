@@ -1,261 +1,34 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>
-		LABERINTO CHEVERE
-	</title>
-	<style type="text/css">
-		body{
-			width: 100%;
-		}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Inline&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABERINTO CHEVERE</title>
+  </head>
+  <body>
 
-	</style>
-</head>
-<body>
-	<canvas id="mycanvas" width="1300" height="700">
-		Tu navegador no soporta canvas
-	</canvas>
+    <h1 class="title">LABERINTO</h1>
 
-	<script type="text/javascript">
+    <div class="complete">
+      <h3>LABERINTO COMPLETADO.</h3>
+      <button class="replay" id="submit">JUGAR DE NUEVO</button>
+      <button class="close" id="submit">CERRAR</button>
+    </div>
 
-		var canvas = null;
-		var ctx = null;
-		var player1 = null;
-		var player2 = null;
-    var obstaculo1=null;
-		var super_x = 10, super_y = 10;
-		var direction = 'right';
-		var score = 0;
-		var pause = false;
-		var juego=true;
-		var restar=false;
-		var time=0;
-		var laberinto=[];
-		let FinalLaberinto=[1260,660];
-		var coin = new Image();
-		var duende = new Image();
-		var soundCoin=new Audio();
-		var soundtrack=new Audio();
-		function start()
-		{
-			//se definen las variables
-			canvas = document.getElementById('mycanvas');
-			ctx = canvas.getContext('2d');
-			player1 = new Cuadrado(super_x,super_y,20,20,'purple');
-			player2 = new Cuadrado(FinalLaberinto[0],FinalLaberinto[1],20,20,'red');
-      obstaculo1=new Cuadrado(250,250,200,20,"silver");
-			coin.src="coin.png";
-			duende.src="duende.png";
-			soundCoin.src='getCoin.mp3';
-			soundtrack.src='halo_soundtrack.mp3';
-			soundtrack.play();
+      <form id="settings" action="">
+        <p>TAMAÑO DEL LABERINTO</p>
+        <input id="size" type="number" value="500"/></br>
+        <p>FILAS/COLUMNAS</p>
+        <input id="number" type="number" value="20" /></br>
+        <input id="submit" type="submit" value="GENERAR LABERINTO">
+      </form>
+  
+    <canvas class="maze"></canvas>
 
-			paint();
-
-
-		}
-		function Obstaculos(laberinto[]){
-			 laberinto = [];
-			for (var i = 0; i < 63; i++) {
-				var x= 60;
-				var y=60;
-				laberinto[i]= new Cuadrado(x,y,20,20,"silver");
-
-
-			}
-			for (var i = 0; i < laberinto.length; i++) {
-				laberinto[i].dibujar(ctx);
-			}
-
-
-		}
-
-
-		function paint()
-		{
-				//funcion para pintar
-				window.requestAnimationFrame(paint)
-				ctx.fillStyle = "purple";
-				ctx.fillRect(0,0,1300,700);
-
-	      //TABLERO
-				ctx.fillStyle = "white";
-				ctx.font="20px Arial"
-				ctx.fillText('SCORE:'+score ,15,15);
-				ctx.drawImage(duende,player1.x,player1.y);
-				ctx.drawImage(coin,player2.x,player2.y);
-	      obstaculo1.dibujar(ctx);
-				Obstaculos(ctx);
-				//timer
-				countUpTimer();
-				//juego es una variable para reproducir el juego y la musica y algunas funciones
-
-				if(juego ){
-
-
-						if (pause) {
-						ctx.fillStyle = "rgba(0,0,0,0.5)"
-						ctx.fillRect(0,0,1300,700)
-						ctx.fillStyle = "white";
-						ctx.font='60px Arial'
-						ctx.fillText('P A U S E',600,350);
-						soundtrack.pause();
-						}else{
-							update();
-						}
-
-				}else{
-					ctx.fillStyle = "rgba(0,0,0,0.5)"
-					ctx.fillRect(0,0,1300,700)
-					ctx.fillStyle = "white";
-					ctx.font='60px Arial'
-					ctx.fillText('YOU WIN',600,350);
-			  	ctx.fillText('YOU WIN',600,350);
-					soundtrack.pause();
-				}
-		}
-
-
-		function update()
-		{
-					if (direction == 'right') {
-						player1.x += 5;
-						if (player1.x>1260) {
-							player1.x = 1260;
-						}
-					}
-					if (direction == 'left') {
-						player1.x -= 5;
-						if (player1.x<0) {
-							player1.x = 0;
-						}
-					}
-
-					if (direction == 'down') {
-						player1.y += 5;
-						if (player1.y>660) {
-							player1.y = 660;
-						}
-					}
-					if (direction == 'up') {
-						player1.y -= 5;
-						if (player1.y<0) {
-							player1.y = 0;
-						}
-					}
-					if (player1.se_tocan(player2)) {
-						juego=false;
-						soundCoin.play();
-					}
-
-		        if(player1.se_tocan(obstaculo1)){
-											if (direction == 'right') {
-											player.x-=5;
-										}
-										if (direction == 'left') {
-											player.x+=5;
-										}
-
-										if (direction == 'down') {
-											player1.y-=5;
-										}
-										if (direction == 'up') {
-											player1.y+=5;
-										}
-
-			   					}
-										 if(restar){
-											juego=true;
-											player1.x==10;
-											player1.y==10;
-											time=0;
-
-							 			}
-
-
-			}
-
-		document.addEventListener('keydown',function(e){
-			//arriba
-			if (e.keyCode == 87 || e.keyCode == 38) {
-				direction = 'up';
-			}
-			//abajo
-			if (e.keyCode == 83 || e.keyCode == 40) {
-				direction = 'down';
-			}
-			//izquierda
-			if (e.keyCode == 65 || e.keyCode == 37) {
-				direction = 'left';
-			}
-			//derecha
-			if (e.keyCode == 68 || e.keyCode == 39) {
-				direction = 'right';
-			}
-			//pause
-			if (e.keyCode == 32  ) {
-				pause = (pause)?false:true;
-			}
-			if(e.keyCode==82 && !juego){
-				restar=true;
-			}
-
-		})
-
-
-
-
-
-
-		window.addEventListener('load',start)
-
-		window.requestAnimationFrame = (function () {
-		    return window.requestAnimationFrame ||
-		        window.webkitRequestAnimationFrame ||
-		        window.mozRequestAnimationFrame ||
-		        function (callback) {
-		            window.setTimeout(callback, 17);
-		        };
-		}());
-
-		function Cuadrado(x,y,w,h,c)
-		{
-			this.x = x;
-			this.y = y;
-			this.w = w;
-			this.h = h;
-			this.c = c;
-			this.se_tocan = function (target) {
-				if(this.x < target.x + target.w &&
-				   this.x + this.w > target.x &&
-				   this.y < target.y + target.h &&
-				   this.y + this.h > target.y)
-				{
-					return true;
-				}
-			};
-			this.dibujar = function(ctx){
-				ctx.fillStyle = this.c;
-				ctx.fillRect(this.x,this.y,this.w,this.h);
-				ctx.strokeRect(this.x,this.y,this.w,this.h);
-			}
-		}
-
-		function RandomNumber(max) {
-		    return Math.floor(Math.random() * max) + 1;
-		}
-
-    //funcion para contar el tiempo
- 	function  countUpTimer() {
-	  ++time;
-	  var hour = Math.floor(time / 3600);
-	  var minute = Math.floor((time - hour * 3600) / 60);
-	  var seconds = time - (hour * 3600 + minute * 60);
-		ctx.fillStyle = "white";
-		ctx.fillText('minutes:'+hour+ " seconds:"+minute,300,15);
-	}
-	</script>
-</body>
+    <script src="maze.js"></script>
+    <script src="settings.js"></script>
+  </body>
 </html>
